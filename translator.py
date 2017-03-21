@@ -21,7 +21,7 @@ with open("program.f90",'rb') as fi:
 		if not codeline: break
                 codeline =codeline.strip(" ")
                 tokens = codeline.split(" ")
-                print tokens
+
 	        #if statement controls
                 
 		if codeline == "\n":
@@ -72,30 +72,39 @@ with open("program.f90",'rb') as fi:
 			printtabs(fo, index)
 			fo.write("\n")	
                 elif (tokens[0] == "select") or (tokens[0] == "SELECT"):
-                        selector = tokens[2]#.split('(')).split(')')[0]
+                        selector = (tokens[2].split('('))[1].split(')')[0]
+                        #tokens[2]#.split('(')).split(')')[0]
                         print selector
                         
-                        while tokens[0] != "end" or tokens[0] != "END":
+                        while "end" not in tokens or "END" not in tokens:
                                 codeline = fi.readline()
                                 codeline =codeline.strip(" ")
                                 tokens = codeline.split(" ")
-                                
-		                if codeline == "\n":
+
+                                if "end" in tokens or "END" in tokens:
+                                        break;
+		                elif codeline == "\n":
 			                fo.write("\n")
 
-                                elif tokens[0] == "default" or tokens[0] == "DEFAULT":
-                                        fo.write("else: \n")
-                                        index += 2
+                                
                                         
                                 elif tokens[0] == "case" or tokens[0] == "CASE":
-                                        case = (tokens[1].split('('))[1].split(')')[0]
-                                        index += 2
-                                        fo.write("if "+selector + " = " + case +" :\n")
+                                        
+                                        if tokens[1] == 'default\r\n' or tokens[1] == 'DEFAULT\r\n':
+                                                fo.write("else: \n")
+                                                index += 2
+                                        else:
+                                            
+                                                case = (tokens[1].split('('))[1].split(')')[0]
+                                            
+                                                index += 2
+                                            
+                                                fo.write("if "+ selector + " == " + case +" :\n")
                                         #check for ranges
                                 else:
                                         printtabs(fo, index)
-                                        index -= 1
-                                        fo.write(tokens[0])
+                                        index -= 2
+                                        fo.write(codeline + "\n")
 
                                         #need to check statement
                                         #if it calls a function
