@@ -57,7 +57,7 @@ with open("program.f90",'rb') as fi:
                 #special line types
 		if codeline == "\n": #if blank line
 			fo.write("\n")
-		elif (codeline[0] == "!"): # if whole line is comment
+		elif (codeline[0] == "!") or (codeline[0] == "c") or (codeline[0] == "C"): # if whole line is comment
 			printtabs(fo, index)
 			fo.write("#" + codeline + "\n")
 		elif (codeline == "end\n") or (codeline == "END\n"): #if end of program
