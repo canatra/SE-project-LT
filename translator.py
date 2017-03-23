@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import re
+import sys
 
 #function to print the tabs at the beginning of the lines
 def printtabs(fo, i):
@@ -12,6 +13,7 @@ def printtabs(fo, i):
 
 #variables; fi should probably be set as a command line argument
 index = 0;
+linecount = 0;
 #libraries = {"datetime-fortran":"datetime",  }
 
 #match the codeline whose key word do not know how to manage
@@ -34,60 +36,104 @@ with open("program.f90",'rb') as fi:
 
         #re.compile()
 	while True:
-        	codeline=fi.readline()
-		if not codeline: break
+        	line = fi.readline()
+		if not line: break #exit while read loop if line not read
+		linecount = linecount +1 #track line number for error messages
+		# check for gotos, currently not supported
+		if ("goto" in line) or ("GOTO" in line):
+			print "Goto detected in line " + linecount + ".  Translation terminating.\n"
+			fo.write("TRANSLATION HALTED ON LINE " + linecount + ". 'GOTO' is not supported\n")
+			sys.exit()
+		#check for comments
+		if ("!" in line) and (line[0] != "!"): #if there is code and a comment on same line
+			line.split("!")
+			codeline = line[0]
+			comments = line[1]
+		else:
+			codeline = line
                 codeline =codeline.strip(" ")
                 tokens = codeline.split(" ")
 
-	        #if statement controls
-                
-		if codeline == "\n":
+                #special line types
+		if codeline == "\n": #if blank line
 			fo.write("\n")
-
+		elif (codeline[0] == "!"): # if whole line is comment
+			printtabs(fo, index)
+			fo.write("#" + codeline + "\n")
+		elif (codeline == "end\n") or (codeline == "END\n"): #if end of program
+			fo.write("# script ends")
+		#if statements
 		elif (tokens[0] == "IF") or (tokens[0] == "if"):
 			printtabs(fo, index)
 			fo.write("if")
 			counter = 1
 			while (codeline[counter] != "THEN") and (codeline[counter] != "then") and (codeline[counter] != "EXIT") and (codeline[counter] != "exit"):
-				fo.write(" " + codeline[counter])
+				if (codeline[counter] == ".AND."):
+					fo.write("and ")
+				elif (codeline[counter] == ".OR."):
+					fo.write("or ")
+				elif (codeline[counter] == ".EQV."):
+					fo.write("!xor ")
+				elif (codeline[counter] == ".NEQV."):
+					fo.write("xor ")
+				elif (codeline[counter] == ".NOT."):
+					fo.write("!")
+				else:
+					fo.write(codeline[counter] + " ")
 				counter = counter + 1
 			if (codeline[counter] == "THEN") or (codeline[counter] == "then"):
-				fo.write(":\n")
+				fo.write(":")
+			        index = index + 1 #whatever follows must be indented
 			elif (codeline[counter] == "EXIT") or (codeline[counter] == "exit"):
-				fo.write(": break\n")
-			        index = index + 1
+				fo.write(": break")
+				#the next line will not be indented as the if block ends
+
 		elif (tokens[0] == "EXIT") or (tokens[0] == "exit"):
-			fo.write("break\n")
+			printtabs(fo, index)
+			fo.write("break")
 		elif (tokens[0] == "CONTINUE") or (tokens[0] == "continue"):
-			fo.write("continue\n")
-		elif (tokens[0] == "ELSE") or (tokens[0] == "else"):
+			printtabs(fo, index)
+			fo.write("continue")
+		elif ((tokens[0] == "ELSE") or (tokens[0] == "else")) and ((tokens[1] == "IF") or (tokens[1] == "if")):
 			index = index - 1
 			printtabs(fo, index)
-			fo.write("elif")
+			fo.write("elif ")
 			counter = 2
 			while (codeline[counter] != "THEN") and (codeline[counter] != "then") and (codeline[counter] != "EXIT") and (codeline[counter] != "exit"):
-				fo.write(" " + codeline[counter])
+				if (codeline[counter] == ".AND."):
+					fo.write("and ")
+				elif (codeline[counter] == ".OR."):
+					fo.write("or ")
+				elif (codeline[counter] == ".EQV."):
+					fo.write("!xor ")
+				elif (codeline[counter] == ".NEQV."):
+					fo.write("xor ")
+				elif (codeline[counter] == ".NOT."):
+					fo.write("!")
+				else:
+					fo.write(codeline[counter] + " ")
 				counter = counter + 1
-			        fo.write(":\n")
-			        index = index + 1
+			if (codeline[counter] == "THEN") or (codeline[counter] == "then"):
+				fo.write(":")
+				index = index + 1
+			elif (codeline[counter] == "EXIT") or (codeline[counter] == "exit"):
+				fo.write(": break")
+				# the next line will not be indented as the if block ends
 		elif (tokens[0] == "ENDIF") or (tokens[0] == "endif"):
 			index = index - 1
 			printtabs(fo, index)
-			fo.write(":\n")
-		        #do loop controls
+		#do loops
 		elif (tokens[0] == "DO") or (tokens[0] == "do"):
 			printtabs(fo, index)
-			fo.write("for "+ tokens[2] + " in range(" + tokens[4]+ tokens[5] + ":")
+			fo.write("for "+ tokens[2] + " in range(" + tokens[4]+ tokens[5] + "):")
 			index = index + 1
 		elif (tokens[0] == "ENDDO") or (tokens[0] == "enddo"):
 			index = index - 1
 			printtabs(fo, index)
-			fo.write("\n")
 		elif (tokens[0] == "END") or (tokens[0] == "end"):
-			#some loops use "end for" or "end do" rather than run together
+			#some loops use "end if" or "end do" rather than run together
 			index = index - 1
-			printtabs(fo, index)
-			fo.write("\n")	
+			printtabs(fo, index)	
                 elif (tokens[0] == "select") or (tokens[0] == "SELECT"):
                         selector = (tokens[2].split('('))[1].split(')')[0]
                         
@@ -105,8 +151,8 @@ with open("program.f90",'rb') as fi:
                                                                                 
                                 elif tokens[0] == "case" or tokens[0] == "CASE":
                                         
-                                        if tokens[1] == 'default\r\n' or tokens[1] == 'DEFAULT\r\n':
-                                                fo.write("else: \n")
+                                        if tokens[1] == 'default\r\n' or tokens[1] == 'DEFAULT\r':
+                                                fo.write("else: ")
                                                 index += 2
                                         else:
                                             
@@ -114,12 +160,12 @@ with open("program.f90",'rb') as fi:
                                             
                                                 index += 2
                                             
-                                                fo.write("if "+ selector + " == " + case +" :\n")
+                                                fo.write("if "+ selector + " == " + case +" :")
                                         #check for ranges
                                 else:
                                         printtabs(fo, index)
                                         index -= 2
-                                        fo.write(codeline + "\n")
+                                        fo.write(codeline)
 
                                         #need to check statement
                                         #if it calls a function
@@ -150,14 +196,12 @@ with open("program.f90",'rb') as fi:
                         str=codeline.split("::")
                         printtabs(fo,index)
                         fo.write(str[1].strip())
-                        fo.write('\n')
                         continue
                 elif pat_declare.match(codeline):
                         continue
                 elif pat_assign_one.match(codeline):
                         printtabs(index) 
                         fo.write(codeline.strip())
-                        fo.write('\n')
                         continue   
                 # write print statement 
                 elif pat_print.match(codeline):
@@ -166,10 +210,14 @@ with open("program.f90",'rb') as fi:
                                 tempstr="print("+temptoken[1].replace("*","").replace(",","",1).strip()+")"
                                 printtabs(fo,index) 
                                 fo.write(tempstr.strip())
-                                fo.write('\n')
                         else :
                                 temptoken=codeline.split("print")
                                 tempstr="print("+temptoken[1].strip()+")"
                                 printtabs(fo,index)       
-                                fo.write(tempstr.strip())   
-                                fo.write('\n')
+                                fo.write(tempstr.strip())
+				
+		#EOL comment printing
+		if comments in locals(): #if there was a comment set
+			fo.write(" #" + comments + "\n")
+		else:
+			fo.write("\n")
