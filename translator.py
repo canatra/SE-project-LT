@@ -13,6 +13,19 @@ def printtabs(fo, i):
 #variables; fi should probably be set as a command line argument
 index = 0;
 #libraries = {"datetime-fortran":"datetime",  }
+
+#match the codeline whose key word do not know how to manage
+pat_ignore=re.compile(r"\s*USE|use|MODULE|module|IMPLICIT|implicit|program|PROGRAM|!\s*\.*")
+ #match the codeline whose declaration without assigning value
+pat_declare=re.compile(r"\s*\S*\s*::\s*")
+ #match the codeline whose declaration with assigning value
+pat_assign_dec=re.compile(r".*::.*=.*")
+#match the codeline whose assigning one value
+pat_assign_one=re.compile(r'\s*\w+\s*=\s*("(.*)"|\w*.|\w*)\s*\w*\s*') 
+ #match the codeline include print statement
+pat_print=re.compile(r'print|PRINT|Print\s*(,)\w*')
+
+
 fo = open("program.py", 'w')
 
 #getting the line and splitting it into tokens
@@ -113,30 +126,28 @@ with open("program.f90",'rb') as fi:
                                         #if it does arithmetic
                                         #if it just sets equal to the variable then done
                 elif pat_ignore.match(codeline): 
-   	                elif pat_ignore.match(codeline): 
-                                #declare program 
-                                if "PROGRAM" in codeline:
-                                        recodeline=codeline.replace("PROGRAM","def") 
-                                        print("write this line", recodeline)  
-                                        
-                                        fo.write(recodeline.strip()) 
-                                        fo.write('\n')
-                                        index=index+2
-                                        
-                                elif "program" in codeline:
-                                        recodeline=codeline.replace("program","def")
-                                        print("write this line", recodeline)   
-                                        fo.write(recodeline.strip()) 
-                                        fo.write('\n')
-                                        index=index+2
-                                        #ignore other declaration    
-                                else:   
-                                        print("ignore this line", codeline)
-                                        continue
-                                # write assignment
+                        #declare program 
+                        if "PROGRAM" in codeline:
+                                recodeline=codeline.replace("PROGRAM","def") 
+                                print("write this line", recodeline)  
+                                
+                                fo.write(recodeline.strip()) 
+                                fo.write('\n')
+                                index=index+2
+                                
+                        elif "program" in codeline:
+                                recodeline=codeline.replace("program","def")
+                                print("write this line", recodeline)   
+                                fo.write(recodeline.strip()) 
+                                fo.write('\n')
+                                index=index+2
+                                #ignore other declaration    
+                        else:   
+                                print("ignore this line", codeline)
+                                continue
+                        # write assignment
                 elif pat_assign_dec.match(codeline):
                         str=codeline.split("::")
-                        printtabs(index)
                         printtabs(fo,index)
                         fo.write(str[1].strip())
                         fo.write('\n')
@@ -153,14 +164,12 @@ with open("program.f90",'rb') as fi:
                         if "*" in codeline:
                                 temptoken=codeline.split("print")
                                 tempstr="print("+temptoken[1].replace("*","").replace(",","",1).strip()+")"
-                                printtabs(index) 
                                 printtabs(fo,index) 
                                 fo.write(tempstr.strip())
                                 fo.write('\n')
                         else :
                                 temptoken=codeline.split("print")
                                 tempstr="print("+temptoken[1].strip()+")"
-                                printtabs(index)       
                                 printtabs(fo,index)       
                                 fo.write(tempstr.strip())   
                                 fo.write('\n')
