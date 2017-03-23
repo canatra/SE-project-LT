@@ -46,9 +46,9 @@ with open("program.f90",'rb') as fi:
 			sys.exit()
 		#check for comments
 		if ("!" in line) and (line[0] != "!"): #if there is code and a comment on same line
-			line.split("!")
-			codeline = line[0]
-			comments = line[1]
+			line1 = line.split("!")
+			codeline = line1[0]
+			comments = line1[1]
 		else:
 			codeline = line
                 codeline =codeline.strip(" ")
@@ -59,9 +59,11 @@ with open("program.f90",'rb') as fi:
 			fo.write("\n")
 		elif (codeline[0] == "!") or (codeline[0] == "c") or (codeline[0] == "C"): # if whole line is comment
 			printtabs(fo, index)
-			fo.write("#" + codeline + "\n")
-		elif (codeline == "end\n") or (codeline == "END\n"): #if end of program
+			fo.write("#" + codeline)
+		elif ("end program" in codeline) or ("END PROGRAM" in codeline): #if start of program
 			fo.write("# script ends")
+		elif (tokens[0] == "PROGRAM") or (tokens[0] = "program"):
+			fo.write("# script begins")
 		#if statements
 		elif (tokens[0] == "IF") or (tokens[0] == "if"):
 			printtabs(fo, index)
