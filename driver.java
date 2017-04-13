@@ -3,7 +3,7 @@ import java.io.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-public class Test {  
+public class driver {  
   public static void main(String[] args) throws Exception {
     File testFile = new File(args[0]);
     InputStream fileStream = new FileInputStream(testFile);
