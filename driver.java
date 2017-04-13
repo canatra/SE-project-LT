@@ -24,7 +24,7 @@ public class Test {
     ParseTreeWalker walker = new ParseTreeWalker();
     f_to_py translator = new f_to_py(tokens);
     // Walk the tree created during the parse, trigger callbacks
-    walker.walk(test, tree);
+    walker.walk(translator, tree);
     System.out.println(); // print a \n after translation
   }
 }
