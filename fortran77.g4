@@ -26,7 +26,7 @@ grammar fortran77;
 
 /* Start rule */
 program
-   : ((~ COMMENT) executableUnit | (: COMMENT) +) +
+   : executableUnit // | ((: COMMENT) +)	+
    ;
 
 /* one unit of a fortran program */
@@ -372,7 +372,7 @@ assignmentStatement
 gotoStatement
    : ('goto' | 'go' to) (unconditionalGoto | computedGoto | assignedGoto)
    ;
-
+   
 /* 31 */
 unconditionalGoto
    : lblRef
@@ -402,7 +402,7 @@ ifStatement
    ;
 
 arithmeticIfStatement
-   : lblRef COMMA lblRef COMMA lblRef
+   : lblRef COMMA lblRef COMMA lblRef /* here */
    ;
 
 /* 35 */
@@ -1273,7 +1273,8 @@ CONTINUATION
 
 
 EOS
-   : (('\n' | '\r' ('\n')?)) + (('     ' CONTINUATION) '     ' CONTINUATION |)
+   : (('\r')?'\n') | EOF
+//(('\n' | '\r' ('\n')?))+  (('     ' CONTINUATION) '     ' CONTINUATION |)
    ;
 
 // Fortran 77 doesn't allow for empty lines. Therefore EOS (newline) is NOT
@@ -1288,7 +1289,7 @@ WS
 // We however trim empty comment lines.
 
 COMMENT
-   : ('c' | '*') (('%' '&' (NOTNL)* |) | (NOTNL) +) (('\n' | '\r' ('\n')?)) +
+   : ('c' | '*'| '!')-> skip // (('%' '&' (NOTNL)* |) | (NOTNL) +) (('\n' | '\r' ('\n')?)) +
    ;
 
 // '' is used to drop the charater when forming the lexical token
@@ -1308,7 +1309,7 @@ ZCON
 // identifier (keyword or variable)
 
 NAME
-   : (('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | ALPHA (ALNUM)*
+   : (ALNUM+)(ALNUM+)* //(('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | ALPHA (ALNUM)*
    ;
 
 
@@ -1318,7 +1319,7 @@ WHITE
 
 
 ALPHA
-   : ('a' .. 'z')
+   : ('a' .. 'z')|('A' .. 'Z')
    ;
 
 // case-insensitive
