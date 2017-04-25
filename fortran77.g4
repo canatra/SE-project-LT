@@ -1,4 +1,4 @@
-/*
+/*	
  * Fortran 77 grammar for ANTLR 2.7.5
  * Adadpted from Fortran 77 PCCTS grammar by Olivier Dragon
  * Original PCCTS grammar by Terence Parr
@@ -68,7 +68,7 @@ otherSpecificationStatement
 /* 7 */
 executableStatement
    : (assignmentStatement | gotoStatement | ifStatement | doStatement | continueStatement | stopStatement | pauseStatement | readStatement | writeStatement | printStatement | rewindStatement | backspaceStatement | openStatement | closeStatement | endfileStatement | inquireStatement | callStatement | returnStatement)
-   {System.out.println($text); }
+   {}
    ;
 
 /* 8 */
@@ -77,7 +77,8 @@ programStatement
    ;
 
 seos
-   : EOS
+     /*: EOS*/
+     :('/r'?'\n')
    ;
 
 /* 9, 11, 13 */
@@ -1273,7 +1274,7 @@ CONTINUATION
 
 
 EOS
-   : (('\r')?'\n') | EOF
+   : (('\r')?'\n') 
 //(('\n' | '\r' ('\n')?))+  (('     ' CONTINUATION) '     ' CONTINUATION |)
    ;
 
