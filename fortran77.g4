@@ -39,7 +39,7 @@ executableUnit
 
 /* 2 */
 mainProgram
-   : (programStatement)? subprogramBody
+   : (programStatement)? subprogramBody  ((functionStatement) functionSubprogram)?
    ;
 
 /* 3 */
@@ -78,7 +78,7 @@ programStatement
 
 seos
      /*: EOS*/
-     :('/r'?'\n')
+     :('\r'?'\n')
    ;
 
 /* 9, 11, 13 */
@@ -482,12 +482,12 @@ writeStatement
 
 /* 45 */
 readStatement
-   : 'read' ((formatIdentifier (COMMA ioList)? EOS) (formatIdentifier (COMMA ioList)?) | LPAREN controlInfoList RPAREN (ioList)?)
+   : 'read' (formatIdentifier (COMMA ioList)?) /*| LPAREN controlInfoList RPAREN (ioList)?)*/
    ;
 
 /* 46 */
 printStatement
-   : 'print' formatIdentifier (COMMA ioList)?
+   : 'print' (formatIdentifier (COMMA ioList)?)
    ;
 
 /* 47 */
@@ -1198,10 +1198,10 @@ FCON
    ;
 
 
-RCON
+/*RCON
    : 'RCON'
    ;
-
+*/
 
 CCON
    : 'CCON'
@@ -1300,8 +1300,12 @@ COMMENT
 SCON
    : '\'' ('\'' '\'' | ~ ('\'' | '\n' | '\r') | (('\n' | '\r' ('\n')?) '     ' CONTINUATION) ('\n' | '\r' ('\n')?) '     ' CONTINUATION)* '\''
    ;
+// numeral literal: ICON goes here what to do what to do?
 
-// numeral literal
+
+
+RCON:
+	'.' (NUM)* (EXPON)?;
 
 ZCON
    : 'z' '\'' (HEX) + '\''
