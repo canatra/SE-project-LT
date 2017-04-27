@@ -59,19 +59,17 @@ public class f_to_py extends fortran77BaseListener{
 	    
 	    System.out.print("print ");
 	    String delims ="print";
-	    String tobeparsed = new String(ctx.getText());
-	    String [] tokens = tobeparsed.split(delims);
+	    String tobeparsed = ctx.getText();
+	   String temp= tobeparsed.replace("*,","");
+	    String [] tokens = temp.split(delims);
 	    
 	    
 	    for (int i = 1; i < tokens.length; ++i)
 		{
-		    
-		    if (tokens[i].equals("*") )
-		    	continue;
-		    else{
+		   
 		    	System.out.print(tokens[i]);
 		    	
-				    }
+		
 		}
 	    System.out.println(" ");   
 	}
@@ -79,7 +77,7 @@ public class f_to_py extends fortran77BaseListener{
     //use this function and parse the read statement;
 	@Override public void enterReadStatement(fortran77Parser.ReadStatementContext ctx) {
 	    String delims ="[read,,]+";
-	    String tobeparsed = new String(ctx.getText());
+	    String tobeparsed = ctx.getText();
 	    String [] tokens = tobeparsed.split(delims);
 	    
 	    
@@ -116,6 +114,35 @@ public class f_to_py extends fortran77BaseListener{
 	    System.out.println(ctx.getText());
 	    
 	}
+	@Override public void enterDoVarArgs(fortran77Parser.DoVarArgsContext ctx) {
 
+	    String temp = ctx.getText();
+	    String temp2 = temp.replace("<missing '='>", " ");
+	    temp2 = temp2.replace("do","");
+	    String delims = "=";
+	    String [] tokens = temp2.split(delims);
+
+	    System.out.print("for ");
+	    
+	    for (int i = 0; i < tokens.length; ++i)
+		{
+		    if ( i < 1){
+			System.out.print(tokens[i]);
+			System.out.print(" in xrange(");
+					 }else{
+			    System.out.print(tokens[i]);
+			}
+					    
+		}
+	
+	    System.out.println("): #loop");
+		    	 
+		
+	    
+	}
+
+    	@Override public void exitDoStatement(fortran77Parser.DoStatementContext ctx) {
+	    System.out.println("#end loop");
+	}
     
 }//end of class
