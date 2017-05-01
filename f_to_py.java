@@ -40,7 +40,6 @@ public class f_to_py extends fortran77BaseListener{
 		    	
 		
 		}
-	    //test for SEOS?
 	   
 	
 	}
