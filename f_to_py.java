@@ -10,49 +10,18 @@ public class f_to_py extends fortran77BaseListener{
 	this.tokens = tokens;
     }
 
-    @Override
-    public void enterProgram(fortran77Parser.ProgramContext ctx)
-    {
-	//open the python file, write program comments in the python file, translate libraries?
-	
-	//System.out.println("Entering program");
-	
-	
-    }
-    
-    @Override
-    public void exitProgram(fortran77Parser.ProgramContext ctx){
 
-	
-    }
-
-
-    @Override public void enterFunctionSubprogram(fortran77Parser.FunctionSubprogramContext ctx) {
-
-	//input def function name ():
-	// tab counter += 1
-    }
-
-    @Override public void exitFunctionSubprogram(fortran77Parser.FunctionSubprogramContext ctx) {
-	//tab counter -= 1
-    }
-
-    @Override public void enterSubroutineSubprogram(fortran77Parser.SubroutineSubprogramContext ctx) { }
-
-    @Override public void exitSubroutineSubprogram(fortran77Parser.SubroutineSubprogramContext ctx) { }
-
-    	@Override public void enterFunctionStatement(fortran77Parser.FunctionStatementContext ctx) {
-
-	    //increment tab counter
-	}
-
-    
-    	@Override public void exitFunctionStatement(fortran77Parser.FunctionStatementContext ctx) { }
-
-    	@Override public void enterSubroutineStatement(fortran77Parser.SubroutineStatementContext ctx) { }
-
-    	@Override public void exitSubroutineStatement(fortran77Parser.SubroutineStatementContext ctx) { }
-    
+	@Override
+	public void enterAssignmentStatement(fortran77Parser.AssignmentStatementContext ctx) {
+		// TODO Auto-generated method stub
+		super.enterAssignmentStatement(ctx);
+        String temp = ctx.getText();
+        String temp2;
+	   
+	    temp2 = temp.replace(".false.", "False").replace(".true.","True");
+	    System.out.println(temp2);
+        
+	}    
     
     	@Override public void enterPrintStatement(fortran77Parser.PrintStatementContext ctx) {
 
@@ -71,6 +40,8 @@ public class f_to_py extends fortran77BaseListener{
 		    	
 		
 		}
+	    //test for SEOS?
+	   
 	    System.out.println(" ");   
 	}
 
@@ -110,39 +81,56 @@ public class f_to_py extends fortran77BaseListener{
 
     @Override public void enterIoList(fortran77Parser.IoListContext ctx) {// System.out.println(ctx.getText());
     }
-	@Override public void enterAssignmentStatement(fortran77Parser.AssignmentStatementContext ctx) {
-	    System.out.println(ctx.getText());
-	    
+
+	@Override
+	public void enterParamassign(fortran77Parser.ParamassignContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println(ctx.getText());
+			System.out.println(ctx.getParent());
+			//super.enterParamassign(ctx);
 	}
+
+
+    
 	@Override public void enterDoVarArgs(fortran77Parser.DoVarArgsContext ctx) {
 
 	    String temp = ctx.getText();
 	    String temp2 = temp.replace("<missing '='>", " ");
+	 
 	    temp2 = temp2.replace("do","");
-	    String delims = "=";
-	    String [] tokens = temp2.split(delims);
-
-	    System.out.print("for ");
-	    
-	    for (int i = 0; i < tokens.length; ++i)
-		{
-		    if ( i < 1){
-			System.out.print(tokens[i]);
-			System.out.print(" in xrange(");
-					 }else{
+			       
+	    if (temp2.contains("while")){
+		System.out.print(temp2);
+	    }
+	    else{
+		
+		String delims = "=";
+		String [] tokens = temp2.split(delims);
+		
+		System.out.print("for ");
+		
+		for (int i = 0; i < tokens.length; ++i)
+		    {
+			if ( i < 1){
+			    System.out.print(tokens[i]);
+			    System.out.print(" in xrange(");
+			}else{
 			    System.out.print(tokens[i]);
 			}
 					    
 		}
-	
-	    System.out.println("): #loop");
-		    	 
-		
+
+	    System.out.print(")");
+	    }
+      
+	    System.out.println(": #loop");
 	    
 	}
-
+    
     	@Override public void exitDoStatement(fortran77Parser.DoStatementContext ctx) {
 	    System.out.println("#end loop");
 	}
+
+    
     
 }//end of class
