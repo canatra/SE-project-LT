@@ -19,7 +19,7 @@ public class f_to_py extends fortran77BaseListener{
         String temp2;
 	   
 	    temp2 = temp.replace(".false.", "False").replace(".true.","True");
-	    System.out.println(temp2);
+	    System.out.print(temp2);
         
 	}    
     
@@ -42,7 +42,7 @@ public class f_to_py extends fortran77BaseListener{
 		}
 	    //test for SEOS?
 	   
-	    System.out.println(" ");   
+	
 	}
 
     //use this function and parse the read statement;
@@ -64,6 +64,9 @@ public class f_to_py extends fortran77BaseListener{
 		}
 	}
     
+	@Override public void enterSeos(fortran77Parser.SeosContext ctx) {
+	        System.out.println(" ");   
+	}
 
 @Override public void enterVarRef(fortran77Parser.VarRefContext ctx){
     // System.out.println("in enterVarRef function");
@@ -85,8 +88,8 @@ public class f_to_py extends fortran77BaseListener{
 	@Override
 	public void enterParamassign(fortran77Parser.ParamassignContext ctx) {
 		// TODO Auto-generated method stub
-		System.out.println(ctx.getText());
-			System.out.println(ctx.getParent());
+		System.out.print(ctx.getText());
+			System.out.print(ctx.getParent());
 			//super.enterParamassign(ctx);
 	}
 
@@ -123,12 +126,12 @@ public class f_to_py extends fortran77BaseListener{
 	    System.out.print(")");
 	    }
       
-	    System.out.println(": #loop");
+	    System.out.print(": #loop");
 	    
 	}
     
     	@Override public void exitDoStatement(fortran77Parser.DoStatementContext ctx) {
-	    System.out.println("#end loop");
+	    System.out.print("#end loop");
 	}
 
     
