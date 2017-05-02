@@ -140,7 +140,7 @@ public class f_to_py extends fortran77BaseListener{
     		 String token[]= temp.split("def ");
     		 String token2[]=token[1].split("\\(");
     		 tempFuncName = token2[0];
-		 System.out.println(temp);
+		 System.out.print(temp);
     		 
     	}
    
@@ -154,5 +154,22 @@ public class f_to_py extends fortran77BaseListener{
 	    System.out.println(ctx.getText() + " " + tempFuncName);
 		}
 
+    	@Override public void enterCallStatement(fortran77Parser.CallStatementContext ctx) {
+
+	    String temp = ctx.getText().replace("call","");
+	    System.out.print(temp);
+	}
+    
+	@Override public void enterSubroutineStatement(fortran77Parser.SubroutineStatementContext ctx) {
+	    String temp = ctx.getText().replace("subroutine", "def ").replaceAll("real|integer|\n|\r\n", "") + ": #function";
+    		 String token[]= temp.split("def ");
+    		 String token2[]=token[1].split("\\(");
+    		 tempFuncName = token2[0];
+		 System.out.print(temp);
+    	
+	}
+	@Override public void exitSubroutineSubprogram(fortran77Parser.SubroutineSubprogramContext ctx) {
+	    	System.out.println("#end function");
+	}
     
 }//end of class

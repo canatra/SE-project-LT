@@ -136,6 +136,7 @@ wholeStatement
 
 endStatement
    : (LABEL)? 'end' seos
+   | (LABEL)? 'END' seos
    ;
 
 /* 15 */
@@ -506,20 +507,20 @@ pauseStatement
 
 /* 44 */
 writeStatement
-   : 'write' LPAREN controlInfoList RPAREN (ioList)?
-   | 'WRITE' LPAREN controlInfoList RPAREN (ioList)?
+   : 'write' LPAREN controlInfoList RPAREN ((COMMA ioList)+)?
+   | 'WRITE' LPAREN controlInfoList RPAREN ((COMMA ioList)+)?
    ;
 
 /* 45 */
 readStatement
-   : 'read' (formatIdentifier (COMMA ioList)?) /*| LPAREN controlInfoList RPAREN (ioList)?)*/
-   | 'READ' (formatIdentifier (COMMA ioList)?) /*| LPAREN controlInfoList RPAREN (ioList)?)*/
+   : 'read' (formatIdentifier ((COMMA ioList)+) ?) /*| LPAREN controlInfoList RPAREN (ioList)?)*/
+   | 'READ' (formatIdentifier ((COMMA ioList)+)?) /*| LPAREN controlInfoList RPAREN (ioList)?)*/
    ;
 
 /* 46 */
 printStatement
-   : 'print' (formatIdentifier (COMMA ioList)?)
-   | 'PRINT' (formatIdentifier (COMMA ioList)?)
+   : 'print' (formatIdentifier ((COMMA ioList)+)?)
+   | 'PRINT' (formatIdentifier ((COMMA ioList)+)?)
    ;
 
 /* 47 */
@@ -1456,7 +1457,7 @@ ZCON
 // identifier (keyword or variable)
 
 NAME
-   : (ALNUM+)(ALNUM+)* //(('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | ALPHA (ALNUM)*
+   : (ALNUM+)(ALNUM)* //(('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | ALPHA (ALNUM)*
    ;
 
 
