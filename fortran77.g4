@@ -78,7 +78,7 @@ programStatement
 
 seos
      /*: EOS*/
-     :('\r'?'\n')
+     :('\r\n'|'\n')
    ;
 
 /* 9, 11, 13 */
