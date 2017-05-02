@@ -31,7 +31,7 @@ program
 
 /* one unit of a fortran program */
 executableUnit
-   : (functionStatement) functionSubprogram
+   : functionSubprogram
    | mainProgram
    | subroutineSubprogram
    | blockdataSubprogram

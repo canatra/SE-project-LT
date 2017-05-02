@@ -4,7 +4,9 @@ import org.antlr.v4.runtime.Token;
 
 public class f_to_py extends fortran77BaseListener{
     BufferedTokenStream tokens;
-
+    public static String tempFuncName; 
+   
+    
     public f_to_py(BufferedTokenStream tokens){
 
 	this.tokens = tokens;
@@ -133,6 +135,24 @@ public class f_to_py extends fortran77BaseListener{
 	    System.out.print("#end loop");
 	}
 
+	@Override public void enterFunctionStatement(fortran77Parser.FunctionStatementContext ctx) { 
+	    String temp = ctx.getText().replace("function", "def ").replaceAll("real|integer|\n|\r\n", "") + ": #function";
+    		 String token[]= temp.split("def ");
+    		 String token2[]=token[1].split("\\(");
+    		 tempFuncName = token2[0];
+		 System.out.println(temp);
+    		 
+    	}
+   
     
+    @Override public void exitFunctionSubprogram(fortran77Parser.FunctionSubprogramContext ctx) { 
+    	System.out.println("#end function");
+    }
+   
+    	@Override
+		public void enterReturnStatement(fortran77Parser.ReturnStatementContext ctx) {
+	    System.out.println(ctx.getText() + " " + tempFuncName);
+		}
+
     
 }//end of class
