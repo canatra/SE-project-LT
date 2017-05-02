@@ -171,5 +171,13 @@ public class f_to_py extends fortran77BaseListener{
 	@Override public void exitSubroutineSubprogram(fortran77Parser.SubroutineSubprogramContext ctx) {
 	    	System.out.println("#end function");
 	}
-    
+
+    @Override
+public void enterDataStatementEntity(fortran77Parser.DataStatementEntityContext ctx) {
+// TODO Auto-generated method stub
+	super.enterDataStatementEntity(ctx);
+	String token1= ctx.dse1().getText().replace("/", "");
+	String token2= ctx.dse2().getText().replace("/", "");
+	System.out.println(token1+"="+token2);
+    }
 }//end of class
