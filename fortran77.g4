@@ -26,7 +26,7 @@ grammar fortran77;
 
 /* Start rule */
 program
-   : executableUnit+| // | ((: COMMENT) +)	+
+   : executableUnit+ // | ((: COMMENT) +)	+
    ;
 
 /* one unit of a fortran program */
