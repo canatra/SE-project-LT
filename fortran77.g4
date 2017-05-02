@@ -26,7 +26,7 @@ grammar fortran77;
 
 /* Start rule */
 program
-   : executableUnit+ // | ((: COMMENT) +)	+
+   : executableUnit+ 
    ;
 
 /* one unit of a fortran program */
@@ -382,11 +382,11 @@ dataImpliedDoListWhat
    ;
 
 /* 29 */
-assignmentStatement
-   : varRef ASSIGN expression
-   |
+//assignmentStatement
+  // : varRef ASSIGN expression
+   //|
    //	'let' varRef ASSIGN expression | 'assign' ICON to variableName
-   ;
+   //;
 
 /* 30 */
 gotoStatement
@@ -521,6 +521,13 @@ readStatement
 printStatement
    : 'print' (formatIdentifier ((COMMA ioList)+)?)
    | 'PRINT' (formatIdentifier ((COMMA ioList)+)?)
+   ;
+
+
+assignmentStatement
+   : varRef ASSIGN expression
+   |
+   //	'let' varRef ASSIGN expression | 'assign' ICON to variableName
    ;
 
 /* 47 */
@@ -1433,7 +1440,7 @@ WS
 // We however trim empty comment lines.
 
 COMMENT
-   : ('c' | '*'| '!')-> skip // (('%' '&' (NOTNL)* |) | (NOTNL) +) (('\n' | '\r' ('\n')?)) +
+   : ('c'|'*'| '!') //->skip (('%' '&' (NOTNL)* |) | (NOTNL) +) (('\n' | '\r' ('\n')?)) +
    ;
 
 // '' is used to drop the charater when forming the lexical token
@@ -1457,7 +1464,8 @@ ZCON
 // identifier (keyword or variable)
 
 NAME
-   : (ALNUM+)(ALNUM)* //(('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | ALPHA (ALNUM)*
+   : 
+   (('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | (ALNUM+)(ALNUM)* 
    ;
 
 
