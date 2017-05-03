@@ -46,7 +46,7 @@ public class f_to_py extends fortran77BaseListener{
 	
 	}
 
-    //use this function and parse the read statement;
+
 	@Override public void enterReadStatement(fortran77Parser.ReadStatementContext ctx) {
 	    String delims ="[read,,]+";
 	    String tobeparsed = ctx.getText();
