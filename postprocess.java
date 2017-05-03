@@ -20,7 +20,7 @@ public class postprocess{
 		
 			 if(!str.isEmpty()&&!str.contains("def")&&!defFlag){
                  lineArray.add(str);
-        //         System.out.println("regular add:"+ str);
+
 			 }else if(str.contains("def")){
 				 defFlag = true;
 				 lineArray.add(defIndex, str);
@@ -28,10 +28,10 @@ public class postprocess{
 				 
 			 }else if(!str.contains("def") && defFlag){
 				 lineArray.add(defIndex, str);
-		//		 System.out.println("def add: " +str);
+
 				 defIndex++;
 				 if(str.contains("#end function")){
-		//			 System.out.println("recog");
+
 					 defFlag =false;
 					 defIndex = 0;
 				 }
@@ -45,19 +45,13 @@ public class postprocess{
 		
 		String lastline=null;
 		System.out.println();
-//	System.out.println("before tab process");
-//	for(String k: lineArray){
-//			System.out.println(k);
-//		}
-//		System.out.println("after tab process");
-//		System.out.println();
 		
 		for(int i = 0; i<lineArray.size(); i++){
 			String line = lineArray.get(i);
-	//	       System.out.println("indent :" + indent);
+
 				if((line.contains("if")||line.contains("for")||line.contains("while")||line.contains("def"))&&!line.contains("#end")){
 					System.out.println(lineArray.get(i));
-				//	linePrinted=true;
+
 					indent= indent+1;
 					
 					continue;
