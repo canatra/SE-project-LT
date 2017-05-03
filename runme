@@ -1,0 +1,29 @@
+#!/bin/bash
+#usage:   ./runme filenameToBeTranslated
+#example: ./runme Hello
+
+#this script assumes that the grammar and the files to be tested are all in the same folder
+#this script assumes that ANTLR4 is already installed completely
+
+#set up grammar files if needed
+if [ ! -f './fortran.tokens' ]
+then
+java -Xmx500M -cp "/usr/local/lib/antlr-4.5.3-complete.jar:$CLASSPATH" org.antlr.v4.Tool fortran77.g4
+javac *.java
+fi
+
+#set up file names
+fortranfile="$1.f"
+fortranfilemodded="$1mod.f"
+temppython="$1temp.py"
+finalpython="$1.py"
+
+#run translator
+java preprocess "$fortranfile" > "$fortranfilemodded"
+java driver "$fortranfilemodded" > "$temppython"
+java postprocess "$temppython" > "$finalpython"
+
+#cleanup
+rm $fortranfilemodded
+rm $temppython
+echo "Translation finished!"
