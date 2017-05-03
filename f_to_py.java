@@ -69,22 +69,8 @@ public class f_to_py extends fortran77BaseListener{
 	        System.out.println(" ");   
 	}
 
-@Override public void enterVarRef(fortran77Parser.VarRefContext ctx){
-    // System.out.println("in enterVarRef function");
-    //System.out.print(ctx.getText());
-
-}
 
 
-    //don't use these functions
-   @Override public void enterFormatIdentifier(fortran77Parser.FormatIdentifierContext ctx) {
-
-       
-       //System.out.println(ctx.getText());
-    }
-
-    @Override public void enterIoList(fortran77Parser.IoListContext ctx) {// System.out.println(ctx.getText());
-    }
 
 	@Override
 	public void enterParamassign(fortran77Parser.ParamassignContext ctx) {
@@ -100,7 +86,6 @@ public class f_to_py extends fortran77BaseListener{
 
 	    String temp = ctx.getText();
 	    String temp2 = temp.replace("<missing '='>", " ");
-	 
 	    temp2 = temp2.replace("do","");
 			       
 	    if (temp2.contains("while")){
