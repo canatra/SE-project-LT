@@ -16,11 +16,24 @@ public static void main(String[] args) throws IOException{
 			
 			String tokens[]=str.split(" ");
 			if(str.isEmpty()||tokens[0].equals("c")){
-			// do nothing for blankline or comment line 	
+				// do nothing for blankline or comment line 	
 			}
 			else {
-			String temp=str.toLowerCase();
-			lineArray.add(temp);
+				String sections[]=str.split("\'");
+				String temp = sections[0].toLowerCase();
+				//System.out.println("Section 0: " + sections[0]);
+				for (int i = 1; i < sections.length; i++) {
+					//System.out.println("Section " + i + ": " + sections[i]); 
+					if (i%2 == 1) { //do not change case of statements in quotes
+						temp += "\'";
+						temp += sections[i];
+						temp += "\'";
+					}
+					else {
+						temp += sections[i].toLowerCase();
+					}
+				}
+				lineArray.add(temp);
 			}
 			
 			str = reader.readLine();
